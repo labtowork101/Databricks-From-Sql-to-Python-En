@@ -131,7 +131,7 @@ print(236)
 # MAGIC 1. Create the date August 15, 2024, with `date()` and print it.
 # MAGIC 2. Print the year, month, and day on the same line, read with the attributes.
 # MAGIC 3. Print on the same line the number of the day of the week (`weekday()`) and its name, read from `WEEKDAY_NAMES`.
-# MAGIC 4. Print the date in Italian format with `strftime()`.
+# MAGIC 4. Print the date in US format with `strftime()`.
 # MAGIC 5. Calculate the number of the day in the year (1 for January 1) and print `Day of the year: ...`.
 
 # COMMAND ----------
@@ -145,8 +145,8 @@ print(ferragosto.year, ferragosto.month, ferragosto.day)
 # Method: called with parentheses; 0 = Monday, so 3 = Thursday
 print(ferragosto.weekday(), WEEKDAY_NAMES[ferragosto.weekday()])
 
-# From date to text in Italian format
-print(ferragosto.strftime("%d/%m/%Y"))
+# From date to text in US format
+print(ferragosto.strftime("%m/%d/%Y"))
 
 # The day of the year also counts January 1: difference + 1
 day_of_year = (ferragosto - date(2024, 1, 1)).days + 1
@@ -158,36 +158,36 @@ print(f"Day of the year: {day_of_year}")
 print("2024-08-15")
 print(2024, 8, 15)
 print(3, "Thursday")
-print("15/08/2024")
+print("08/15/2024")
 print("Day of the year: 228")
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- Check: 3, 5, 15/08/2024, 228 (dayofweek starts from 1 = Sunday)
+# MAGIC -- Check: 3, 5, 08/15/2024, 228 (dayofweek starts from 1 = Sunday)
 # MAGIC SELECT weekday(DATE'2024-08-15')                    AS weekday_num,
 # MAGIC        dayofweek(DATE'2024-08-15')                  AS dayofweek_num,
-# MAGIC        date_format(DATE'2024-08-15', 'dd/MM/yyyy')  AS italian_text,
+# MAGIC        date_format(DATE'2024-08-15', 'MM/dd/yyyy')  AS us_text,
 # MAGIC        dayofyear(DATE'2024-08-15')                  AS day_of_year
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Exercise 4 ★★ – Dates in Italian Format
-# MAGIC The `italian_dates` list (cell below) contains three dates written in Italian format (day/month/year).
+# MAGIC ## Exercise 4 ★★ – Dates in US Format
+# MAGIC The `us_dates` list (cell below) contains three dates written in US format (month/day/year).
 # MAGIC 1. Convert the texts into dates with `datetime.strptime(...).date()`, collecting them in the `converted_dates` list.
 # MAGIC 2. With a loop over `converted_dates`, print for each date: the date in ISO format, the name of the day, and the days elapsed since the first date in the list (0 for the first).
 
 # COMMAND ----------
 
-italian_dates = ["01/06/2024", "15/08/2024", "31/12/2024"]   # example values
+us_dates = ["06/01/2024", "08/15/2024", "12/31/2024"]   # example values
 
 # COMMAND ----------
 
-# From Italian text to date: strptime with the format, then date() to drop the time
+# From US text to date: strptime with the format, then date() to drop the time
 converted_dates = []
-for text in italian_dates:
-    converted_dates.append(datetime.strptime(text, "%d/%m/%Y").date())
+for text in us_dates:
+    converted_dates.append(datetime.strptime(text, "%m/%d/%Y").date())
 
 first_date = converted_dates[0]
 for converted in converted_dates:
@@ -205,10 +205,10 @@ print("2024-12-31 Tuesday 213")
 
 # MAGIC %sql
 # MAGIC -- Check: the same dates with to_date (weekday 5, 3, 1; days 0, 75, 213)
-# MAGIC SELECT to_date(italian_text, 'dd/MM/yyyy')                                AS converted,
-# MAGIC        weekday(to_date(italian_text, 'dd/MM/yyyy'))                       AS weekday_num,
-# MAGIC        datediff(to_date(italian_text, 'dd/MM/yyyy'), DATE'2024-06-01')    AS days_from_first
-# MAGIC FROM VALUES ('01/06/2024'), ('15/08/2024'), ('31/12/2024') AS t(italian_text)
+# MAGIC SELECT to_date(us_text, 'MM/dd/yyyy')                                AS converted,
+# MAGIC        weekday(to_date(us_text, 'MM/dd/yyyy'))                       AS weekday_num,
+# MAGIC        datediff(to_date(us_text, 'MM/dd/yyyy'), DATE'2024-06-01')    AS days_from_first
+# MAGIC FROM VALUES ('06/01/2024'), ('08/15/2024'), ('12/31/2024') AS t(us_text)
 
 # COMMAND ----------
 
@@ -321,8 +321,8 @@ print("Nights in 2024: 4 (947.80) - nights in 2025: 1 (236.95)")
 
 # MAGIC %md
 # MAGIC ## Exercise 7 ★★★ – The Lead Time of Requests
-# MAGIC The `raw_requests` list (cell below) contains seven example booking requests, with the date and time of the request (`created_at`) and the arrival date (`check_in`) written in Italian format.
-# MAGIC 1. Define `to_italian_date(text)` and `to_italian_datetime(text)`, twins of `to_date`: they convert a text with `strptime()` (formats `"%d/%m/%Y"` and `"%d/%m/%Y %H:%M"`; the first returns a `date`) and return `None` if the text is missing or isn't valid. Write a docstring for each one.
+# MAGIC The `raw_requests` list (cell below) contains seven example booking requests, with the date and time of the request (`created_at`) and the arrival date (`check_in`) written in US format.
+# MAGIC 1. Define `to_us_date(text)` and `to_us_datetime(text)`, twins of `to_date`: they convert a text with `strptime()` (formats `"%m/%d/%Y"` and `"%m/%d/%Y %H:%M"`; the first returns a `date`) and return `None` if the text is missing or isn't valid. Write a docstring for each one.
 # MAGIC 2. With a loop, convert the two values of each row; if one of the two is `None`, print `Discarded ...` with the `booking_id`, count the discarded row, and move on to the next row.
 # MAGIC 3. For the valid rows, calculate the lead time in days (arrival minus request date) and the band: `"last minute"` if the lead time is less than 7 days, otherwise `"early"`. Print `booking_id: lead days ... (band)`.
 # MAGIC 4. Count the rows per band in a dictionary, count the evening requests (made from 6 p.m. on, that is, with an hour of 18 or more), and calculate the average lead time with one decimal place.
@@ -330,33 +330,33 @@ print("Nights in 2024: 4 (947.80) - nights in 2025: 1 (236.95)")
 # COMMAND ----------
 
 raw_requests = [   # example values
-    {"booking_id": 1001, "created_at": "20/02/2024 14:35", "check_in": "15/03/2024"},
-    {"booking_id": 1002, "created_at": "02/05/2024 09:10", "check_in": "31/05/2024"},
-    {"booking_id": 1003, "created_at": "08/06/2024 22:45", "check_in": "10/06/2024"},
-    {"booking_id": 1004, "created_at": "15/02/2024 11:00", "check_in": "30/02/2024"},
-    {"booking_id": 1005, "created_at": "28/07/2024 08:20", "check_in": "10/08/2024"},
-    {"booking_id": 1006, "created_at": "", "check_in": "14/08/2024"},
-    {"booking_id": 1007, "created_at": "27/12/2024 19:05", "check_in": "28/12/2024"},
+    {"booking_id": 1001, "created_at": "02/20/2024 14:35", "check_in": "03/15/2024"},
+    {"booking_id": 1002, "created_at": "05/02/2024 09:10", "check_in": "05/31/2024"},
+    {"booking_id": 1003, "created_at": "06/08/2024 22:45", "check_in": "06/10/2024"},
+    {"booking_id": 1004, "created_at": "02/15/2024 11:00", "check_in": "02/30/2024"},
+    {"booking_id": 1005, "created_at": "07/28/2024 08:20", "check_in": "08/10/2024"},
+    {"booking_id": 1006, "created_at": "", "check_in": "08/14/2024"},
+    {"booking_id": 1007, "created_at": "12/27/2024 19:05", "check_in": "12/28/2024"},
 ]
 
 # COMMAND ----------
 
-def to_italian_date(text):
-    """Converts a DD/MM/YYYY text into a date; None if missing or not a valid date."""
+def to_us_date(text):
+    """Converts a MM/DD/YYYY text into a date; None if missing or not a valid date."""
     if text is None:
         return None
     try:
-        return datetime.strptime(text, "%d/%m/%Y").date()
+        return datetime.strptime(text, "%m/%d/%Y").date()
     except ValueError:
         return None
 
 
-def to_italian_datetime(text):
-    """Converts a DD/MM/YYYY HH:MM text into a datetime; None if missing or not valid."""
+def to_us_datetime(text):
+    """Converts a MM/DD/YYYY HH:MM text into a datetime; None if missing or not valid."""
     if text is None:
         return None
     try:
-        return datetime.strptime(text, "%d/%m/%Y %H:%M")
+        return datetime.strptime(text, "%m/%d/%Y %H:%M")
     except ValueError:
         return None
 
@@ -366,8 +366,8 @@ lead_times = []
 count_by_band = {}
 evening_requests = 0
 for row in raw_requests:
-    created_at = to_italian_datetime(row["created_at"])
-    check_in = to_italian_date(row["check_in"])
+    created_at = to_us_datetime(row["created_at"])
+    check_in = to_us_date(row["check_in"])
     if created_at is None or check_in is None:
         rejected_count = rejected_count + 1
         print(f"Discarded {row['booking_id']}")
@@ -411,16 +411,16 @@ print("Average lead time: 13.8 days")
 # MAGIC %sql
 # MAGIC -- Check on the five valid rows: 5, 2, 2, 13.8
 # MAGIC SELECT COUNT(*) AS valid_requests,
-# MAGIC        SUM(CASE WHEN datediff(to_date(check_in, 'dd/MM/yyyy'), to_date(created_at, 'dd/MM/yyyy HH:mm')) < 7
+# MAGIC        SUM(CASE WHEN datediff(to_date(check_in, 'MM/dd/yyyy'), to_date(created_at, 'MM/dd/yyyy HH:mm')) < 7
 # MAGIC                 THEN 1 ELSE 0 END) AS last_minute,
-# MAGIC        SUM(CASE WHEN hour(to_timestamp(created_at, 'dd/MM/yyyy HH:mm')) >= 18
+# MAGIC        SUM(CASE WHEN hour(to_timestamp(created_at, 'MM/dd/yyyy HH:mm')) >= 18
 # MAGIC                 THEN 1 ELSE 0 END) AS evening_requests,
-# MAGIC        ROUND(AVG(datediff(to_date(check_in, 'dd/MM/yyyy'), to_date(created_at, 'dd/MM/yyyy HH:mm'))), 1) AS avg_lead_days
-# MAGIC FROM VALUES ('20/02/2024 14:35', '15/03/2024'),
-# MAGIC             ('02/05/2024 09:10', '31/05/2024'),
-# MAGIC             ('08/06/2024 22:45', '10/06/2024'),
-# MAGIC             ('28/07/2024 08:20', '10/08/2024'),
-# MAGIC             ('27/12/2024 19:05', '28/12/2024')
+# MAGIC        ROUND(AVG(datediff(to_date(check_in, 'MM/dd/yyyy'), to_date(created_at, 'MM/dd/yyyy HH:mm'))), 1) AS avg_lead_days
+# MAGIC FROM VALUES ('02/20/2024 14:35', '03/15/2024'),
+# MAGIC             ('05/02/2024 09:10', '05/31/2024'),
+# MAGIC             ('06/08/2024 22:45', '06/10/2024'),
+# MAGIC             ('07/28/2024 08:20', '08/10/2024'),
+# MAGIC             ('12/27/2024 19:05', '12/28/2024')
 # MAGIC      AS t(created_at, check_in)
 
 # COMMAND ----------
@@ -429,7 +429,7 @@ print("Average lead time: 13.8 days")
 # MAGIC ## Exercise 8 ★★★ – Find the Errors
 # MAGIC The first four cells below produce an error, the last two a **silent error**. Run them one by one, note the type, the message, and the line (or the wrong result), and write the corrected version below.
 # MAGIC
-# MAGIC **Expected result of the fixes**: `2`; `2024-06-14`; `31/12/2024`; `22`; `10/06/2024`; `June 10 arrivals: 2`.
+# MAGIC **Expected result of the fixes**: `2`; `2024-06-14`; `12/31/2024`; `22`; `06/10/2024`; `June 10 arrivals: 2`.
 
 # COMMAND ----------
 
@@ -461,19 +461,19 @@ print(check_out)
 
 # INTENTIONAL ERROR – cell 8c (December 31, 2024)
 last_day = date(2024, 31, 12)
-print(last_day.strftime("%d/%m/%Y"))
+print(last_day.strftime("%m/%d/%Y"))
 
 # COMMAND ----------
 
 # Fix 8c - ValueError (month must be in 1..12): the order is year, month, day
 last_day = date(2024, 12, 31)
-print(last_day.strftime("%d/%m/%Y"))
+print(last_day.strftime("%m/%d/%Y"))
 
 # COMMAND ----------
 
 # INTENTIONAL ERROR – cell 8d (the time of a request)
 import datetime
-created_at = datetime.strptime("08/06/2024 22:45", "%d/%m/%Y %H:%M")
+created_at = datetime.strptime("06/08/2024 22:45", "%m/%d/%Y %H:%M")
 print(created_at.hour)
 
 # COMMAND ----------
@@ -481,20 +481,20 @@ print(created_at.hour)
 # Fix 8d - AttributeError: import datetime put the module into the name datetime;
 # the standard form puts the type back
 from datetime import date, timedelta, datetime
-created_at = datetime.strptime("08/06/2024 22:45", "%d/%m/%Y %H:%M")
+created_at = datetime.strptime("06/08/2024 22:45", "%m/%d/%Y %H:%M")
 print(created_at.hour)
 
 # COMMAND ----------
 
-# SILENT ERROR – cell 8e (the arrival date in Italian format)
+# SILENT ERROR – cell 8e (the arrival date in US format)
 check_in = date(2024, 6, 10)
-print(check_in.strftime("%d/%M/%Y"))
+print(check_in.strftime("%M/%d/%Y"))
 
 # COMMAND ----------
 
 # Fix 8e - %M is the minutes (00 for a date), %m is the month
 check_in = date(2024, 6, 10)
-print(check_in.strftime("%d/%m/%Y"))
+print(check_in.strftime("%m/%d/%Y"))
 
 # COMMAND ----------
 

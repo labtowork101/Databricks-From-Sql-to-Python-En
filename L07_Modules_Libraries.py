@@ -333,12 +333,12 @@ print(WEEKDAY_NAMES[check_in.weekday()])
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC From text in Italian format (day/month/year) to date with `datetime.strptime()` and `.date()`. Expected results: `2024-03-15 00:00:00` and `2024-03-15`.
+# MAGIC From text in US format (month/day/year) to date with `datetime.strptime()` and `.date()`. Expected results: `2024-03-15 00:00:00` and `2024-03-15`.
 
 # COMMAND ----------
 
-italian_text = "15/03/2024"
-check_in_with_time = datetime.strptime(italian_text, "%d/%m/%Y")
+us_text = "03/15/2024"
+check_in_with_time = datetime.strptime(us_text, "%m/%d/%Y")
 print(check_in_with_time)
 check_in = check_in_with_time.date()
 print(check_in)
@@ -346,45 +346,45 @@ print(check_in)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC From date to text: `strftime()` with a format, `str()` and f-strings with the ISO format. Expected results: `15/03/2024`, `2024-03-15`, `Arrival: 2024-03-15`.
+# MAGIC From date to text: `strftime()` with a format, `str()` and f-strings with the ISO format. Expected results: `03/15/2024`, `2024-03-15`, `Arrival: 2024-03-15`.
 
 # COMMAND ----------
 
-print(check_in.strftime("%d/%m/%Y"))
+print(check_in.strftime("%m/%d/%Y"))
 print(str(check_in))
 print(f"Arrival: {check_in}")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC **SQL Bridge**: `to_date` and `date_format` with the format codes of Databricks SQL. Expected result: `2024-03-15` and `15/03/2024`.
+# MAGIC **SQL Bridge**: `to_date` and `date_format` with the format codes of Databricks SQL. Expected result: `2024-03-15` and `03/15/2024`.
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT to_date('15/03/2024', 'dd/MM/yyyy')          AS check_in,
-# MAGIC        date_format(DATE'2024-03-15', 'dd/MM/yyyy')  AS check_in_text
+# MAGIC SELECT to_date('03/15/2024', 'MM/dd/yyyy')          AS check_in,
+# MAGIC        date_format(DATE'2024-03-15', 'MM/dd/yyyy')  AS check_in_text
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC A text in Italian format passed to `fromisoformat()`: the cell must fail with a `ValueError`.
+# MAGIC A text in US format passed to `fromisoformat()`: the cell must fail with a `ValueError`.
 
 # COMMAND ----------
 
 # INTENTIONAL ERROR – fromisoformat() accepts only the ISO format
-check_in = date.fromisoformat("15/03/2024")
+check_in = date.fromisoformat("03/15/2024")
 print(check_in)
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Fix: the text in Italian format is converted with `strptime()`. Expected result: `2024-03-15`.
+# MAGIC Fix: the text in US format is converted with `strptime()`. Expected result: `2024-03-15`.
 
 # COMMAND ----------
 
-# Fix: for the Italian format, use strptime() with the right format
-check_in = datetime.strptime("15/03/2024", "%d/%m/%Y").date()
+# Fix: for the US format, use strptime() with the right format
+check_in = datetime.strptime("03/15/2024", "%m/%d/%Y").date()
 print(check_in)
 
 # COMMAND ----------
@@ -395,7 +395,7 @@ print(check_in)
 # COMMAND ----------
 
 # INTENTIONAL ERROR – the text uses hyphens, the format uses slashes
-check_in = datetime.strptime("15-03-2024", "%d/%m/%Y").date()
+check_in = datetime.strptime("03-15-2024", "%m/%d/%Y").date()
 print(check_in)
 
 # COMMAND ----------
@@ -406,7 +406,7 @@ print(check_in)
 # COMMAND ----------
 
 # Fix: the format uses hyphens, like the text
-check_in = datetime.strptime("15-03-2024", "%d-%m-%Y").date()
+check_in = datetime.strptime("03-15-2024", "%m-%d-%Y").date()
 print(check_in)
 
 # COMMAND ----------
@@ -688,7 +688,7 @@ def to_date(text):
 print(to_date("2024-03-15"))
 print(to_date("2024-02-30"))
 print(to_date(""))
-print(to_date("15/03/2024"))
+print(to_date("03/15/2024"))
 print(to_date(None))
 
 # COMMAND ----------
@@ -750,7 +750,7 @@ print(f"Valid stays: {len(valid_stays)} - discarded: {rejected_count} - swapped 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC The report of the valid stays: date in Italian format, day of arrival, nights, weekend arrivals. Expected result: four lines, `Total nights: 19 - weekend arrivals: 3`.
+# MAGIC The report of the valid stays: date in US format, day of arrival, nights, weekend arrivals. Expected result: four lines, `Total nights: 19 - weekend arrivals: 3`.
 
 # COMMAND ----------
 
@@ -759,7 +759,7 @@ weekend_arrivals = 0
 for stay in valid_stays:
     arrival = stay["check_in"]
     weekday_name = WEEKDAY_NAMES[arrival.weekday()]
-    print(f"{stay['booking_id']}: arrival {arrival.strftime('%d/%m/%Y')} ({weekday_name}), {stay['nights']} nights")
+    print(f"{stay['booking_id']}: arrival {arrival.strftime('%m/%d/%Y')} ({weekday_name}), {stay['nights']} nights")
     total_nights = total_nights + stay["nights"]
     if arrival.weekday() in (4, 5):
         weekend_arrivals = weekend_arrivals + 1
@@ -896,18 +896,18 @@ print(check_in == date(2024, 3, 15))
 
 # SILENT ERROR – %M is the minutes, %m is the month
 check_in = date(2024, 3, 15)
-print(check_in.strftime("%d/%M/%Y"))
+print(check_in.strftime("%M/%d/%Y"))
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Fix: `%m` is the month. Expected result: `15/03/2024`.
+# MAGIC Fix: `%m` is the month. Expected result: `03/15/2024`.
 
 # COMMAND ----------
 
 # Fix: %m is the month
 check_in = date(2024, 3, 15)
-print(check_in.strftime("%d/%m/%Y"))
+print(check_in.strftime("%m/%d/%Y"))
 
 # COMMAND ----------
 

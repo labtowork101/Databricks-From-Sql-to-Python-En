@@ -40,13 +40,13 @@ teaching_bookings_df = spark.sql(f"SELECT * FROM {BOOKINGS_TABLE}")
 
 # 2024 bookings of the Sardinia property (16317), written as text (exercises 2 and 8f)
 raw_sardinia_rows = [
-    {"booking_id": 49395, "check_in": "08/06/2024", "check_out": "11/06/2024", "total_amount": "647.01"},
-    {"booking_id": 59901, "check_in": "12/07/2024", "check_out": "17/07/2024", "total_amount": "590.95"},
-    {"booking_id": 68070, "check_in": "17/07/2024", "check_out": "22/07/2024", "total_amount": "900.47"},
-    {"booking_id": 688, "check_in": "31/07/2024", "check_out": "05/08/2024", "total_amount": "635.51"},
-    {"booking_id": 9842, "check_in": "18/08/2024", "check_out": "23/08/2024", "total_amount": "759.63"},
-    {"booking_id": 23944, "check_in": "23/08/2024", "check_out": "28/08/2024", "total_amount": "623.81"},
-    {"booking_id": 64865, "check_in": "07/09/2024", "check_out": "08/09/2024", "total_amount": "982.21"},
+    {"booking_id": 49395, "check_in": "06/08/2024", "check_out": "06/11/2024", "total_amount": "647.01"},
+    {"booking_id": 59901, "check_in": "07/12/2024", "check_out": "07/17/2024", "total_amount": "590.95"},
+    {"booking_id": 68070, "check_in": "07/17/2024", "check_out": "07/22/2024", "total_amount": "900.47"},
+    {"booking_id": 688, "check_in": "07/31/2024", "check_out": "08/05/2024", "total_amount": "635.51"},
+    {"booking_id": 9842, "check_in": "08/18/2024", "check_out": "08/23/2024", "total_amount": "759.63"},
+    {"booking_id": 23944, "check_in": "08/23/2024", "check_out": "08/28/2024", "total_amount": "623.81"},
+    {"booking_id": 64865, "check_in": "09/07/2024", "check_out": "09/08/2024", "total_amount": "982.21"},
 ]
 
 print("Setup complete")
@@ -392,8 +392,8 @@ print(bands_df.filter(F.col("price_band") == "high").count())
 # SILENT ERROR – cell 8f (the nights of the Sardinia property)
 sardinia_df = (
     spark.createDataFrame(raw_sardinia_rows)
-    .withColumn("check_in", F.to_date(F.col("check_in"), "dd/mm/yyyy"))
-    .withColumn("check_out", F.to_date(F.col("check_out"), "dd/mm/yyyy"))
+    .withColumn("check_in", F.to_date(F.col("check_in"), "mm/dd/yyyy"))
+    .withColumn("check_out", F.to_date(F.col("check_out"), "mm/dd/yyyy"))
 )
 display(sardinia_df.agg(F.sum(F.datediff(F.col("check_out"), F.col("check_in"))).alias("total_nights")))
 

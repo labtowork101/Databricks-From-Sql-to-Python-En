@@ -284,10 +284,10 @@ display(
 # COMMAND ----------
 
 raw_amalfi_df = spark.createDataFrame([
-    {"booking_id": 24996, "check_in": "28/06/2024", "check_out": "01/07/2024", "total_amount": "914.47"},
-    {"booking_id": 52528, "check_in": "21/07/2024", "check_out": "26/07/2024", "total_amount": "709.36"},
-    {"booking_id": 57340, "check_in": "23/08/2024", "check_out": "26/08/2024", "total_amount": "865.17"},
-    {"booking_id": 12488, "check_in": "30/08/2024", "check_out": "05/09/2024", "total_amount": "407.92"},
+    {"booking_id": 24996, "check_in": "06/28/2024", "check_out": "07/01/2024", "total_amount": "914.47"},
+    {"booking_id": 52528, "check_in": "07/21/2024", "check_out": "07/26/2024", "total_amount": "709.36"},
+    {"booking_id": 57340, "check_in": "08/23/2024", "check_out": "08/26/2024", "total_amount": "865.17"},
+    {"booking_id": 12488, "check_in": "08/30/2024", "check_out": "09/05/2024", "total_amount": "407.92"},
 ])
 raw_amalfi_df.printSchema()
 
@@ -313,8 +313,8 @@ raw_amalfi_df.printSchema()
 
 amalfi_dates_df = (
     raw_amalfi_df
-    .withColumn("check_in", F.to_date(F.col("check_in"), "dd/MM/yyyy"))
-    .withColumn("check_out", F.to_date(F.col("check_out"), "dd/MM/yyyy"))
+    .withColumn("check_in", F.to_date(F.col("check_in"), "MM/dd/yyyy"))
+    .withColumn("check_out", F.to_date(F.col("check_out"), "MM/dd/yyyy"))
     .withColumn("total_amount", F.col("total_amount").cast("double"))
 )
 amalfi_dates_df.printSchema()
@@ -337,8 +337,8 @@ display(amalfi_dates_df.withColumn("nights", F.datediff(F.col("check_out"), F.co
 # SILENT ERROR – mm means minutes, not the month
 wrong_dates_df = (
     raw_amalfi_df
-    .withColumn("check_in", F.to_date(F.col("check_in"), "dd/mm/yyyy"))
-    .withColumn("check_out", F.to_date(F.col("check_out"), "dd/mm/yyyy"))
+    .withColumn("check_in", F.to_date(F.col("check_in"), "mm/dd/yyyy"))
+    .withColumn("check_out", F.to_date(F.col("check_out"), "mm/dd/yyyy"))
 )
 display(wrong_dates_df.withColumn("nights", F.datediff(F.col("check_out"), F.col("check_in"))))
 
@@ -352,8 +352,8 @@ display(wrong_dates_df.withColumn("nights", F.datediff(F.col("check_out"), F.col
 # Fix: MM is the month, mm the minutes
 right_dates_df = (
     raw_amalfi_df
-    .withColumn("check_in", F.to_date(F.col("check_in"), "dd/MM/yyyy"))
-    .withColumn("check_out", F.to_date(F.col("check_out"), "dd/MM/yyyy"))
+    .withColumn("check_in", F.to_date(F.col("check_in"), "MM/dd/yyyy"))
+    .withColumn("check_out", F.to_date(F.col("check_out"), "MM/dd/yyyy"))
 )
 display(right_dates_df.withColumn("nights", F.datediff(F.col("check_out"), F.col("check_in"))))
 
@@ -435,8 +435,8 @@ guide_prices_df.printSchema()
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT to_date('28/06/2024', 'dd/MM/yyyy') AS ok_date,
-# MAGIC        to_date('28/06/2024', 'dd/mm/yyyy') AS wrong_date,
+# MAGIC SELECT to_date('06/28/2024', 'MM/dd/yyyy') AS ok_date,
+# MAGIC        to_date('06/28/2024', 'mm/dd/yyyy') AS wrong_date,
 # MAGIC        CAST('914.47' AS DOUBLE)            AS amount,
 # MAGIC        CAST(284.97 AS INT)                 AS price_int
 

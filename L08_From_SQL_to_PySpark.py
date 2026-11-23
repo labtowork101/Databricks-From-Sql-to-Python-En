@@ -941,7 +941,7 @@ print(first_row.asDict())
 # MAGIC ```
 # MAGIC Row(first_check_in=datetime.date(2022, 12, 29), last_check_in=datetime.date(2025, 7, 30))
 # MAGIC <class 'datetime.date'>
-# MAGIC Arrivals from 29/12/2022 to 30/07/2025: 944 days
+# MAGIC Arrivals from 12/29/2022 to 07/30/2025: 944 days
 # MAGIC ```
 
 # COMMAND ----------
@@ -954,7 +954,7 @@ print(period_row)
 first_check_in = period_row["first_check_in"]
 last_check_in = period_row["last_check_in"]
 print(type(first_check_in))
-print(f"Arrivals from {first_check_in.strftime('%d/%m/%Y')} to {last_check_in.strftime('%d/%m/%Y')}: {(last_check_in - first_check_in).days} days")
+print(f"Arrivals from {first_check_in.strftime('%m/%d/%Y')} to {last_check_in.strftime('%m/%d/%Y')}: {(last_check_in - first_check_in).days} days")
 
 # COMMAND ----------
 
