@@ -295,7 +295,7 @@ print(f"First completed booking at position: {position}")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Exercise 8 ★★★ – Find the Errors (Fixes)
+# MAGIC ## Exercise 8 ★★★ – Find the Errors
 
 # COMMAND ----------
 

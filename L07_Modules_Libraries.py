@@ -390,7 +390,7 @@ print(check_in)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC A text that doesn't match the format of `strptime()`: the cell must fail with a `ValueError`. The traceback has two blocks: the second (`File /usr/lib/python3.12/_strptime.py`) is code from the module, not ours.
+# MAGIC A text that doesn't match the format of `strptime()`: the cell must fail with a `ValueError`. The traceback has three blocks: the second and the third (`File /usr/lib/python3.12/_strptime.py`) are code from the module, not ours.
 
 # COMMAND ----------
 
